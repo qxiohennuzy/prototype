@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Employee</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .dashboard {
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .form-container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+        .button-group button {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background-color: #007BFF;
+            color: white;
+        }
+        .button-group button:hover {
+            background-color: #0056b3;
+        }
+        .action-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .action-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Edit Employee</h2>
+    
+    <div class="dashboard">
+        <h3>Employee Dashboard</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id No</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Mobile No</th>
+                    <th>License Expiration</th>
+                    <th>Address</th>
+                    <th>Assign Bus</th>
+                    <th>Action</th> <!-- New Action Column -->
+                </tr>
+            </thead>
+            <tbody id="employeeTableBody">
+                <tr>
+                    <td>1</td>
+                    <td>John</td>
+                    <td>Doe</td>
+                    <td>123-456-7890</td>
+                    <td>2025-06-15</td>
+                    <td>123 Main St</td>
+                    <td>Bus 1</td>
+                    <td><button class="action-button" onclick="editEmployee('1')">Edit</button></td> <!-- Edit Button -->
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Jane</td>
+                    <td>Smith</td>
+                    <td>987-654-3210</td>
+                    <td>2023-02-20</td>
+                    <td>456 Oak St</td>
+                    <td>Bus 2</td>
+                    <td><button class="action-button" onclick="editEmployee('2')">Edit</button></td> <!-- Edit Button -->
+                </tr>
+                <!-- Add more employees as needed -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-container">
+        <h3>Update Employee Information</h3>
+        <form>
+            <div class="form-group">
+                <label for="editIdNo">Id No:</label>
+                <select id="editIdNo" name="editIdNo" onchange="populateEmployeeData(this.value)">
+                    <option value="">Select Id</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <!-- Add more Ids as needed -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="editFirstName">First Name:</label>
+                <input type="text" id="editFirstName" name="editFirstName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="editLastName">Last Name:</label>
+                <input type="text" id="editLastName" name="editLastName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="editMobileNo">Mobile No:</label>
+                <input type="tel" id="editMobileNo" name="editMobileNo" required>
+            </div>
+
+            <div class="form-group">
+                <label for="editLicenseExpiration">License Expiration:</label>
+                <input type="date" id="editLicenseExpiration" name="editLicenseExpiration" required>
+            </div>
+
+            <div class="form-group">
+                <label for="editAddress">Address:</label>
+                <input type="text" id="editAddress" name="editAddress" required>
+            </div>
+
+            <div class="form-group">
+                <label for="editAssignBus">Assign Bus:</label>
+                <select id="editAssignBus" name="editAssignBus">
+                    <option value="bus1">Bus 1</option>
+                    <option value="bus2">Bus 2</option>
+                    <option value="bus3">Bus 3</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button type="submit">Update</button>
+                <button type="button" onclick="goBack()">Back</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function populateEmployeeData(id) {
+            // Dummy data for demo; replace with real data retrieved from a database/API as needed
+            const employees = {
+                "1": { firstName: "John", lastName: "Doe", mobileNo: "123-456-7890", licenseExpiration: "2025-06-15", address: "123 Main St", assignBus: "Bus 1" },
+                "2": { firstName: "Jane", lastName: "Smith", mobileNo: "987-654-3210", licenseExpiration: "2023-02-20", address: "456 Oak St", assignBus: "Bus 2" },
+            };
+
+            if (id) {
+                const employee = employees[id];
+                document.getElementById('editFirstName').value = employee.firstName;
+                document.getElementById('editLastName').value = employee.lastName;
+                document.getElementById('editMobileNo').value = employee.mobileNo;
+                document.getElementById('editLicenseExpiration').value = employee.licenseExpiration;
+                document.getElementById('editAddress').value = employee.address;
+                document.getElementById('editAssignBus').value = employee.assignBus;
+            } else {
+                // Clear fields if no Id selected
+                document.getElementById('editFirstName').value = '';
+                document.getElementById('editLastName').value = '';
+                document.getElementById('editMobileNo').value = '';
+                document.getElementById('editLicenseExpiration').value = '';
+                document.getElementById('editAddress').value = '';
+                document.getElementById('editAssignBus').value = 'bus1'; // Reset to default
+            }
+        }
+
+        function editEmployee(employeeId) {
+            // Populate the edit fields when the Edit button is clicked
+            document.getElementById('editIdNo').value = employeeId;
+            populateEmployeeData(employeeId);
+        }
+
+         function goBack() {
+        window.history.back(); // This will take the user to the previous page
+        // Alternatively, you could redirect to a specific URL like this:
+        // window.location.href = 'your-target-page.html';
+    }
+    </script>
+
+</body>
+</html>

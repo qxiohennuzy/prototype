@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <style>
+        /* General Reset and Body Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e9ecef, #ced4da); /* Subtle gradient background */
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: rgba(52, 58, 64, 0.85); /* Dark background with transparency */
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            z-index: 100; /* Ensure header is above content */
+            position: sticky;  /* Stick to the top as the user scrolls */
+            top: 0; /* Stick to the top */
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Text shadow */
+        }
+
+        /* Main Styles */
+        main {
+            flex-grow: 1; /* Allows main to take up remaining space */
+            padding: 2rem;
+            display: flex;
+            justify-content: center; /* Center the registration section horizontally */
+            align-items: center; /* Center the registration section vertically */
+        }
+
+        /* Registration Section Styles */
+        #registration {
+            background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white background */
+            border-radius: 0.5rem;
+            box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2);
+            padding: 2.5rem;
+            max-width: 80%; /* Use a percentage to fit better on different screens */
+            width: 600px; /* Max width */
+        }
+
+        #registration h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #343a40; /* Darker heading color */
+            text-align: center;
+        }
+
+        /* Form Styles */
+        #registration-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #registration-form label {
+            text-align: left;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #495057;  /* Lighter label color */
+        }
+
+        #registration-form input[type="text"],
+        #registration-form input[type="email"],
+        #registration-form input[type="tel"],
+        #registration-form input[type="password"],
+        #registration-form select {
+            padding: 0.85rem 1.25rem;
+            margin-bottom: 1.25rem;
+            border: 1px solid #adb5bd;  /* Slightly darker border */
+            border-radius: 0.35rem;
+            font-size: 1.05rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);  /* Subtle inner shadow */
+        }
+
+        #registration-form input[type="text"]:focus,
+        #registration-form input[type="email"]:focus,
+        #registration-form input[type="tel"]:focus,
+        #registration-form input[type="password"]:focus,
+        #registration-form select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Focus ring */
+        }
+
+
+        /* Button Group Styles */
+        .button-group {
+            display: flex;
+            justify-content: flex-start; /* Align buttons to the left */
+            margin-top: 1.5rem;
+        }
+
+        .button-group button {
+            padding: 0.85rem 1.75rem;
+            border: none;
+            border-radius: 0.35rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .button-group button[type="submit"] {
+            background-color: #28a745;  /* Green */
+            color: #fff;
+            margin-right: 1rem;  /* Space between Register and Back */
+        }
+
+        .button-group button[type="submit"]:hover {
+            background-color: #1e7e34; /* Darker Green */
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-group .back-button {
+            background-color: #dc3545;  /* Red */
+            color: #fff;
+        }
+
+        .button-group .back-button:hover {
+            background-color: #c82333; /* Darker Red */
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Paragraph Style */
+        #registration p {
+            margin-top: 1.75rem;
+            color: #6c757d;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        #registration a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        #registration a:hover {
+            text-decoration: underline;
+        }
+
+        /* Two-Column Layout */
+        .two-column {
+            display: flex;
+            justify-content: space-between;  /* Distributes space between the columns */
+            margin-bottom: 1.25rem;
+        }
+
+        .two-column .form-group {
+            flex: 1; /* Each column takes equal space */
+            margin-right: 1rem; /* Space between columns */
+        }
+
+        .two-column .form-group:last-child {
+            margin-right: 0; /* Remove margin for the last column */
+        }
+
+        .two-column label {
+            display: block; /* Stack label above the input */
+            text-align: left;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .two-column input[type="text"],
+        .two-column input[type="email"],
+        .two-column input[type="tel"],
+        .two-column input[type="password"],
+        .two-column select {
+            width: 100%; /* Input fills the column width */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Registration</h1>
+    </header>
+
+    <main>
+        <section id="registration">
+            <h2>Create Your Account</h2>
+            <form id="registration-form">
+                <div class="two-column">
+                    <div class="form-group">
+                        <label for="first-name">First Name:</label>
+                        <input type="text" id="first-name" name="first-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">Last Name:</label>
+                        <input type="text" id="last-name" name="last-name" required>
+                    </div>
+                </div>
+
+                <div class="two-column">
+                    <div class="form-group">
+                        <label for="email">Email Address:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                         <label for="phone">Phone Number:</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+                <div class="two-column">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                </div>
+
+                <div class="two-column">
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password:</label>
+                        <input type="password" id="confirm-password" name="confirm-password" required>
+                    </div>
+                    <div class="form-group">
+                         <label for="user-role">User Role:</label>
+                        <select id="user-role" name="user-role" required>
+                            <option value="admin">Admin</option>
+                            <option value="staff">Staff</option>
+                        </select>
+                    </div>
+
+                </div>
+                <!-- Button Group -->
+                <div class="button-group">
+                    <button type="submit">Register</button>
+                    <button type="button" class="back-button" onclick="goBack()">Back</button>
+                </div>
+            </form>
+            <p>Already have an account? <a href="Admin.html">Login here</a>.</p>
+        </section>
+    </main>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

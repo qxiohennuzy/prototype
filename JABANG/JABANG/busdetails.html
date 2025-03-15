@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMO Shuttle Services Integrated Management System</title>
+  <style> 
+/* General Reset and Body Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e9ecef; /* Light gray background */
+    color: #333;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Sidebar Styles */
+aside {
+    background-color: #343a40;
+    color: #fff;
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 20px;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+    transition: width 0.3s;
+    z-index: 1000;
+}
+
+aside ul {
+    list-style: none;
+    padding: 0;
+}
+
+aside li {
+    margin-bottom: 0.5rem;
+}
+
+aside a {
+    display: block;
+    padding: 1rem 1.5rem;
+    color: #c6c8ca;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: background-color 0.3s, color 0.3s, border-left 0.3s;
+    border-radius: 0.25rem;
+}
+
+aside a:hover,
+aside a.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-left: 3px solid #007bff;
+}
+
+/* Main Content Styles */
+.main-content {
+    margin-left: 280px;
+    padding: 2rem;
+    flex-grow: 1;
+    transition: margin-left 0.3s;
+    margin-top: 80px;
+    background-color: #e9ecef; /* Match the body background */
+}
+
+/* Top Bar Styles */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: #fff;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-info strong {
+    font-weight: 600;
+}
+
+/* Content Section Styles (Combined) */
+.content-section {
+    background-color: #fff;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    display: block;
+}
+
+.welcome-section {
+    margin-bottom: 1.5rem;
+}
+
+.welcome-section h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-section p {
+    font-size: 1.1rem;
+    color: #6c757d;
+}
+
+/* Date Input Styles */
+.date {
+    margin-bottom: 1rem;
+}
+
+.date label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+input[type="month"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+input[type="month"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Button Styles */
+input[type="button"] {
+    background-color: #007bff; /* A slightly bolder primary color */
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    margin-right: 1rem;
+}
+
+input[type="button"]:hover {
+    background-color: #0056b3;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.back-button {
+    background-color: #dc3545;
+}
+
+.back-button:hover {
+    background-color: #c82333;
+}
+
+/* Stats Styles */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+.stat-card {
+    background-color: #fff; /* Make stat cards white */
+    border-radius: 0.25rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card i {
+    font-size: 2.5rem;
+    color: #007bff;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card p {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    aside {
+        width: 100%;
+        position: relative;
+        height: auto;
+        padding-bottom: 1rem;
+        box-shadow: none;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .welcome-section h2 {
+        font-size: 1.75rem;
+    }
+
+    .welcome-section p {
+        font-size: 1rem;
+    }
+}
+
+/* Form Container Styles */
+.container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff; /* Keep the form background white */
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Title */
+.container h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #007bff;
+}
+
+/* Form Labels */
+label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Form Input Styles */
+input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    margin-bottom: 1rem;
+}
+
+input[type="text"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Button Styles - keep as before */
+input[type="submit"], .back-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    margin-right: 1rem;
+}
+
+input[type="submit"]:hover, .back-button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.back-button {
+    background-color: #dc3545;
+}
+
+.back-button:hover {
+    background-color: #c82333;
+}  </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Add Bus Details</h2>
+    <form id="busDetailsForm">
+        <label for="no">No</label>
+        <input type="text" id="no" name="no" required>
+
+        <label for="plateNo">Plate No</label>
+        <input type="text" id="plateNo" name="plateNo" required>
+
+        <label for="myFileNo">My File No</label>
+        <input type="text" id="myFileNo" name="myFileNo" required>
+
+        <label for="motorNo">Motor No</label>
+        <input type="text" id="motorNo" name="motorNo" required>
+
+        <label for="make">Make</label>
+        <input type="text" id="make" name="make" required>
+
+        <label for="chasisNo">Chasis No</label>
+        <input type="text" id="chasisNo" name="chasisNo" required>
+
+        <label for="remarks">Remarks</label>
+        <input type="text" id="remarks" name="remarks">
+
+        <input type="submit" value="Add Bus">
+        <button type="button" class="back-button" onclick="goBack()">Back</button>
+    </form>
+</div>
+
+<script>
+let buses = JSON.parse(localStorage.getItem('buses')) || []; // Load existing buses from localStorage
+
+document.getElementById('busDetailsForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    
+    // Create bus object from form data
+    const bus = {
+        no: document.getElementById("no").value,
+        plateNumber: document.getElementById("plateNo").value,
+        myFileNo: document.getElementById("myFileNo").value,
+        motorNo: document.getElementById("motorNo").value,
+        made: document.getElementById("make").value,
+        chasisNo: document.getElementById("chasisNo").value,
+        remarks: document.getElementById("remarks").value
+    };
+
+    // Add bus to the buses array
+    buses.push(bus);
+    localStorage.setItem('buses', JSON.stringify(buses)); // Save to localStorage
+
+    alert('Bus details added successfully!');
+    
+    // Optionally redirect to the other page
+    window.location.href = 'allbuS.html'; // Change to the actual path of your all bus details page
+});
+
+function goBack() {
+    window.history.back(); // Go back to the previous page
+}
+</script>
+
+</body>
+</html>

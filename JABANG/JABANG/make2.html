@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        #dashboard {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-top: 20px;
+            background: white;
+            border-radius: 5px;
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: white;
+            z-index: 1000;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        #searchForm {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex: 1;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .form-group input {
+            padding: 10px;
+            margin-right: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .button {
+            margin: 0 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            #searchForm {
+                flex-direction: column;
+            }
+
+            .form-group {
+                margin-right: 0;
+                margin-bottom: 10px;
+                width: 100%;
+            }
+
+            .form-group:last-child {
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Reports Dashboard</h1>
+    <form id="searchForm">
+        <div class="form-group">
+            <label for="searchInput">Search:</label>
+            <input type="text" id="searchInput" placeholder="Type name or ID">
+            <button class="button" type="button" id="searchButton" onclick="search()">Search</button>
+            <button class="button" id="backButton" onclick="goBack()" style="display: none;">Back</button>
+        </div>
+    </form>
+
+    <form id="dateSearchForm" style="display:none;">
+        <div class="form-group">
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate">
+        </div>
+        <div class="form-group">
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate">
+        </div>
+        <div class="form-group">
+            <button class="button" type="button" id="dateSearchButton" onclick="search()">Search</button>
+        </div>
+    </form>
+
+    <div>
+        <button class="button" onclick="showDashboard('Employee')">Show Employee Data</button>
+        <button class="button" onclick="showDashboard('Bus')">Show Bus Data</button>
+        <button class="button" onclick="showDashboard('Booking List')">Show Booking List</button>
+    </div>
+
+    <div id="dashboard">
+        <div style="margin-bottom: 10px;">
+            <button class="button" onclick="goBack()" id="dashboardBackButton">Back to Home</button>
+        </div>
+        <table id="dashboardTable">
+            <thead id="dashboardHeader"></thead>
+            <tbody id="dashboardBody"></tbody>
+        </table>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup" id="popup"></div>
+
+    <script>
+        let currentSection = '';
+        const previousSections = [];
+
+        function clearSearchInput() {
+            document.getElementById('searchInput').value = '';
+        }
+
+        function clearDateSearchInput() {
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+        }
+
+        function clearSearchInputs() {
+            clearSearchInput();
+            clearDateSearchInput();
+        }
+
+        function showDashboard(section) {
+            if (currentSection) {
+                previousSections.push(currentSection); // Store the current section before switching
+            }
+            currentSection = section;
+            const dashboardBody = document.getElementById('dashboardBody');
+            const dashboardHeader = document.getElementById('dashboardHeader');
+            const dashboard = document.getElementById('dashboard');
+            const searchForm = document.getElementById('searchForm');
+            const dateSearchForm = document.getElementById('dateSearchForm');
+            const searchInput = document.getElementById('searchInput');
+
+            dashboard.style.display = 'block';
+            dashboardBody.innerHTML = ''; // Clear previous content
+            dashboardHeader.innerHTML = ''; // Clear previous header content
+
+            // Always show the Back to Home button
+            document.getElementById('dashboardBackButton').style.display = 'block';
+
+            searchForm.style.display = (section === 'Booking List') ? 'none' : 'flex'; // Hide search for Booking List
+            dateSearchForm.style.display = (section === 'Booking List') ? 'flex' : 'none'; // Show date search for Booking List
+
+            if (section === 'Employee') {
+                searchInput.placeholder = "Type name or ID";
+                const header = `
+                    <tr>
+                        <th>Id</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Mobile</th>
+                        <th>License Expiration</th>
+                        <th>Address</th>
+                        <th>Assigned Bus</th>
+                    </tr>
+                `;
+                dashboardHeader.innerHTML = header;
+                const employees = JSON.parse(localStorage.getItem('employees')) || [];
+                if (employees.length === 0) {
+                    dashboardBody.innerHTML = '<tr><td colspan="7">No employee data available.</td></tr>';
+                } else {
+                    employees.forEach(emp => {
+                        dashboardBody.innerHTML += `
+                            <tr>
+                                <td>${emp.id}</td>
+                                <td>${emp.firstName}</td>
+                                <td>${emp.lastName}</td>
+                                <td>${emp.mobile}</td>
+                                <td>${emp.licenseExpiration}</td>
+                                <td>${emp.address}</td>
+                                <td>${emp.assignedBus}</td>
+                            </tr>
+                        `;
+                    });
+                }
+            } else if (section === 'Bus') {
+                searchInput.placeholder = "Type plate or file no";
+                const header = `
+                    <tr>
+                        <th>No</th>
+                        <th>Plate Number</th>
+                        <th>My File No</th>
+                        <th>Motor No</th>
+                        <th>Made</th>
+                        <th>Chasis No</th>
+                        <th>Remarks</th>
+                    </tr>
+                `;
+                dashboardHeader.innerHTML = header;
+                const buses = JSON.parse(localStorage.getItem('buses')) || [];
+                if (buses.length === 0) {
+                    dashboardBody.innerHTML = '<tr><td colspan="7">No bus data available.</td></tr>';
+                } else {
+                    buses.forEach(bus => {
+                        dashboardBody.innerHTML += `
+                            <tr>
+                                <td>${bus.no}</td>
+                                <td>${bus.plateNumber}</td>
+                                <td>${bus.myFileNo}</td>
+                                <td>${bus.motorNo}</td>
+                                <td>${bus.made}</td>
+                                <td>${bus.chasisNo}</td>
+                                <td>${bus.remarks}</td>
+                            </tr>
+                        `;
+                    });
+                }
+            } else if (section === 'Booking List') {
+                searchInput.placeholder = "Search by ID or Company";
+                const header = `
+                    <tr>
+                        <th>Id No</th>
+                        <th>Driver Name</th>  <!-- Changed Bus No to Driver Name -->
+                        <th>In/Out</th>
+                        <th>Company</th>
+                        <th>Date</th>
+                        <th>Price</th>
+                        <th>Seat No</th>
+                        <th>Time</th>
+                    </tr>
+                `;
+                dashboardHeader.innerHTML = header;
+                const bookingList = JSON.parse(localStorage.getItem('busList')) || [];
+                if (bookingList.length === 0) {
+                    dashboardBody.innerHTML = '<tr><td colspan="8">No booking list data available.</td></tr>';
+                } else {
+                    bookingList.forEach((booking) => {
+                        dashboardBody.innerHTML += `
+                            <tr>
+                                <td>${booking.idNo}</td>
+                                <td>${booking.driverName}</td>  <!-- Changed busNo to driverName -->
+                                <td>${booking.inOut}</td>
+                                <td>${booking.company}</td>
+                                <td>${booking.date}</td>
+                                <td>₱${booking.price}</td>
+                                <td>${booking.seatNo}</td>
+                                <td>${booking.time}</td>
+                            </tr>
+                        `;
+                    });
+                }
+            }
+
+            clearSearchInputs(); // Clear inputs on dashboard switch
+        }
+
+        function goBack() {
+            // Redirect to the home page
+            window.location.href = "homepage.html";
+        }
+
+        function search() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const dashboardBody = document.getElementById('dashboardBody');
+
+            dashboardBody.innerHTML = ''; // Clear previous content
+
+            if (currentSection === 'Booking List') {
+                const startDateInput = document.getElementById('startDate').value;
+                const endDateInput = document.getElementById('endDate').value;
+                const bookingList = JSON.parse(localStorage.getItem('busList')) || [];
+
+                const filteredBookings = bookingList.filter(booking => {
+                    const bookingDate = new Date(booking.date);
+                    if (startDateInput && new Date(startDateInput) > bookingDate) return false;
+                    if (endDateInput && new Date(endDateInput) < bookingDate) return false;
+                    return true;
+                });
+
+                filteredBookings.forEach((booking) => {
+                    const matchesSearchInput = booking.idNo.toLowerCase().includes(searchInput) ||
+                        booking.company.toLowerCase().includes(searchInput);
+
+                    if (matchesSearchInput) {
+                        const tableRow = `
+                            <tr>
+                                <td>${booking.idNo}</td>
+                                <td>${booking.driverName}</td>  <!-- Changed busNo to driverName -->
+                                <td>${booking.inOut}</td>
+                                <td>${booking.company}</td>
+                                <td>${booking.date}</td>
+                                <td> ₱${booking.price}</td>
+                                <td>${booking.seatNo}</td>
+                                <td>${booking.time}</td>
+                            </tr>
+                        `;
+                        dashboardBody.innerHTML += tableRow;
+                    }
+                });
+            } else if (currentSection === 'Employee') {
+                const employees = JSON.parse(localStorage.getItem('employees')) || [];
+                const filteredEmployees = employees.filter(emp =>
+                    emp.id.toString().includes(searchInput) ||
+                    emp.firstName.toLowerCase().includes(searchInput) ||
+                    emp.lastName.toLowerCase().includes(searchInput)
+                );
+
+                filteredEmployees.forEach((emp) => {
+                    const tableRow = `
+                        <tr>
+                            <td>${emp.id}</td>
+                            <td>${emp.firstName}</td>
+                            <td>${emp.lastName}</td>
+                            <td>${emp.mobile}</td>
+                            <td>${emp.licenseExpiration}</td>
+                            <td>${emp.address}</td>
+                            <td>${emp.assignedBus}</td>
+                        </tr>
+                    `;
+                    dashboardBody.innerHTML += tableRow;
+                });
+            } else if (currentSection === 'Bus') {
+                const buses = JSON.parse(localStorage.getItem('buses')) || [];
+                const filteredBuses = buses.filter(bus =>
+                    bus.plateNumber.toLowerCase().includes(searchInput) ||
+                    bus.myFileNo.toString().includes(searchInput)
+                );
+
+                filteredBuses.forEach((bus) => {
+                    const tableRow = `
+                        <tr>
+                            <td>${bus.no}</td>
+                            <td>${bus.plateNumber}</td>
+                            <td>${bus.myFileNo}</td>
+                            <td>${bus.motorNo}</td>
+                            <td>${bus.made}</td>
+                            <td>${bus.chasisNo}</td>
+                            <td>${bus.remarks}</td>
+                        </tr>
+                    `;
+                    dashboardBody.innerHTML += tableRow;
+                });
+            }
+        }
+
+        function closePopup() {
+            const overlay = document.getElementById('overlay');
+            const popup = document.getElementById('popup');
+            if (overlay) {
+                overlay.style.display = 'none';
+                popup.style.display = 'none';
+            }
+        }
+
+        // Show initial data when page loads
+        showDashboard('Employee');
+    </script>
+</body>
+
+</html>
